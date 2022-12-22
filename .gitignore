@@ -24,14 +24,6 @@
 *.la
 *.a
 *.lib
-!Game/Source/External/SDL/libx86/SDL2.lib
-!Game/Source/External/SDL/libx86/SDL2main.lib
-!Game/Source/External/SDL_image/libx86/SDL2_image.lib
-!Game/Source/External/SDL_mixer/libx86/SDL2_mixer.lib
-!Game/Source/External/Box2D/libx86/DebugLib/Box2D.lib
-!Game/Source/External/Box2D/libx86/DebugLib/Box2D.pdb
-!Game/Source/External/Box2D/libx86/ReleaseLib/Box2D.lib
-!Game/Source/External/Box2D/libx86/ReleaseLib/Box2D.pdb
 
 # Executables
 *.exe
@@ -78,12 +70,6 @@ ipch/
 *.opensdf
 *.db
 *.opendb
-packages/
-Pinball Game SourceCode/Debug/vc142.pdb
-Pinball Game SourceCode/Debug/vc142.pdb
-Pinball Game SourceCode/Debug/vc142.pdb
-Pinball Game SourceCode/Debug/vc142.pdb
-Pinball Game SourceCode/Debug/vc142.pdb
 *.idb
 *.pdb
 *.log
