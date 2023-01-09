@@ -30,7 +30,20 @@ float tra_z = 0.0f;
 float grow_shrink = 60.0f;
 float resize_f = 1.0f;
 
-void drawBox()
+void resetScenario()
+{
+	xrot = 100.0f;
+	yrot = -100.0f;
+
+	xdiff = 100.0f;
+	ydiff = 100.0f;
+
+	tra_x = 0.0f;
+	tra_y = 0.0f;
+	tra_z = 0.0f;
+}
+
+void drawCube()
 {
 	glTranslatef(tra_x, tra_y, tra_z);
 
@@ -85,6 +98,7 @@ void drawBox()
 	glEnd();
 }
 
+
 int init(void)
 {
 	glClearColor(0.9f, 0.9f, 0.9f, 0.0f);
@@ -101,14 +115,14 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	gluLookAt(0.1, 0.5, 3.0,
+	gluLookAt(0.15, 0.5, 3.0,
 			  0.0, 0.0, 0.0,
 			  0.17, 1.0, 0.0);
 
 	glRotatef(xrot, 1.0f, 0.0f, 0.0f);
 	glRotatef(yrot, 0.0f, 1.0f, 0.0f);
 
-	drawBox();
+	drawCube();
 
 	glFlush();
 	glutSwapBuffers();
@@ -126,6 +140,7 @@ void resize(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
+
 
 // USER INPUT
 void keyboardInput(unsigned char key, int x, int y)
@@ -174,9 +189,14 @@ void keyboardInput(unsigned char key, int x, int y)
 
 	switch (key)
 	{
+	case 'f':
+	case 'F':
+		idleRotation = !idleRotation;
+		break;
+
 	case 'r':
 	case 'R':
-		idleRotation = !idleRotation;
+		resetScenario();
 		break;
 
 	case 27:		// ESC key
@@ -266,7 +286,8 @@ void infoConsoleDisplay()
 	cout << "ARROWS ------> Translate Cube" << endl;
 	cout << "X ------> Shrink" << endl;
 	cout << "Z ------> Grow" << endl;
-	cout << "R ------> Idle Cube Rotation" << endl;
+	cout << "F ------> Idle Cube Rotation" << endl;
+	cout << "R ------> Reset Scenario" << endl;
 	cout << "F11 ------> Fullscreen" << endl;
 	cout << "ESCAPE ------> EXIT" << endl << endl;
 }
