@@ -4,7 +4,6 @@
 #include <GL/freeglut.h>
 #include <GL/glut.h>
 #include <iostream>
-#include <gl/freeglut.h>
 #include <math.h>
 
 #define WINDOW_WIDTH 1280
