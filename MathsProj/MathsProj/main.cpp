@@ -272,8 +272,8 @@ void idleCubeRotation(void)
 	{
 		if (!mouseDown)
 		{
-			xrot += 0.05f;
-			yrot += 0.05f;
+			xrot += 0.1f;
+			yrot += 0.1f;
 		}
 	}
 
