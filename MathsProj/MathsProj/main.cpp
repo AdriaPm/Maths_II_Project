@@ -16,7 +16,6 @@
 #define DEGS_TO_RADS 0.01745329252
 #define RADS_TO_DEGS 57.295779513
 
-
 using namespace std;
 using namespace Eigen;
 
@@ -39,6 +38,7 @@ float tra_z = 0.0f;
 float grow_shrink = 60.0f;
 float resize_f = 1.0f;
 
+// Transformation functions
 Matrix3d EulerAnglesToRotationMatrix(float yaw, float pitch, float roll)
 {
 	Matrix3d R;
@@ -93,21 +93,7 @@ Quaternionf EulerAxisAngleToQuaternion(Vector3d axis, float angle)
 	return q;
 }
 
-void resetScenario()
-{
-	xrot = 0.0f;
-	yrot = 0.0f;
-	zrot = 0.0f;
-
-	xdiff = 100.0f;
-	ydiff = 100.0f;
-	zdiff = 100.0f;
-	 
-	tra_x = 0.0f;
-	tra_y = 0.0f;
-	tra_z = 0.0f;
-}
-
+// Draw 3D Cube
 void drawCube()
 {
 	glTranslatef(tra_x, tra_y, tra_z);
@@ -162,6 +148,7 @@ void drawCube()
 	glEnd();
 }
 
+// Draw 2D Line
 void drawLine(GLfloat* lineVertices, int numVertices,int lineWidth, int dimensions, float color_r, float color_g, float color_b)
 {
 	glColor3f(color_r, color_g, color_b);
@@ -173,6 +160,8 @@ void drawLine(GLfloat* lineVertices, int numVertices,int lineWidth, int dimensio
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 }
+
+// Render Text
 void renderbitmap(float x, float y, void* font, char* string)
 {
 	char* c;
@@ -182,24 +171,60 @@ void renderbitmap(float x, float y, void* font, char* string)
 	}
 }
 
-void blitText()
+// Blit Text
+void blitKeyboardInput()
 {
 	glColor3d(0.0f, 0.0f, 0.0f);
 
+	char representation3d[23];
+	sprintf_s(representation3d, "3D CUBE REPRESENTATION");
+	renderbitmap(-0.45f, 1.49f, GLUT_BITMAP_TIMES_ROMAN_24, representation3d);
+
+	char xrotation[33];
+	sprintf_s(xrotation, "Press W/S for X's axis rotation.");
+	renderbitmap(-0.9f, -1.1f, GLUT_BITMAP_9_BY_15, xrotation);
+
+	char yrotation[33];
+	sprintf_s(yrotation, "Press A/D for Y's axis rotation.");
+	renderbitmap(-0.925f, -1.2f, GLUT_BITMAP_9_BY_15, yrotation);
+
+	char zrotation[33];
+	sprintf_s(zrotation, "Press Q/E for Z's axis rotation.");
+	renderbitmap(-0.945f, -1.31f, GLUT_BITMAP_9_BY_15, zrotation);
+
+	char translation[35];
+	sprintf_s(translation, "Press ARROWS for cube translation.");
+	renderbitmap(-0.97f, -1.42f, GLUT_BITMAP_9_BY_15, translation);
+
+	char idleRot[50];
+	sprintf_s(idleRot, "Press SPACE to enable/disable idle cube rotation.");
+	renderbitmap(-0.99f, -1.53f, GLUT_BITMAP_9_BY_15, idleRot);
+
+	char reset[31];
+	sprintf_s(reset, "Press R to reset the scenario.");
+	renderbitmap(-1.015f, -1.64f, GLUT_BITMAP_9_BY_15, reset);
+	
+	char f11[45];
+	sprintf_s(f11, "Press F11 to enable/disable fullscreen mode.");
+	renderbitmap(-1.04f, -1.75f, GLUT_BITMAP_9_BY_15, f11);
+}
+void blitAttitudeInfo()
+{
+	glColor3d(0.0f, 0.0f, 0.0f);
+
+	// Project name
 	char title[35];
 	sprintf_s(title, "Maths 2 Project - Adria Pons Mensa");
 	renderbitmap(2.68f, 1.1f, GLUT_BITMAP_HELVETICA_12, title);
-
 	char subtitle[30];
 	sprintf_s(subtitle, "ATTITUDE  REPRESENTATION");
 	renderbitmap(2.35f, 1.0f, GLUT_BITMAP_TIMES_ROMAN_24, subtitle);
-
 
 	// Quaternion
 	glColor3d(1.0f, .0f, .0f);
 	char quaternion[30];
 	sprintf_s(quaternion, "Quaternion:");
-	renderbitmap(2.555f, 0.7f, GLUT_BITMAP_HELVETICA_18, quaternion);
+	renderbitmap(2.555f, 0.6f, GLUT_BITMAP_HELVETICA_18, quaternion);
 
 	// Euler Axis/Angle
 	glColor3d(.0f, .75f, .0f);
@@ -216,7 +241,6 @@ void blitText()
 	sprintf_s(angles, "Yaw: %.2f   Pitch: %.2f   Roll: %.2f", xrot, yrot, zrot);
 	renderbitmap(2.555f, -0.45f, GLUT_BITMAP_HELVETICA_18, angles);
 
-
 	// Rotation vector
 	glColor3d(1.0f, .0f, 1.0f);
 	char rotVec[17];
@@ -230,6 +254,7 @@ void blitText()
 	renderbitmap(2.555f, -1.3f, GLUT_BITMAP_HELVETICA_18, rotMat);
 	
 
+	// Real-Time info blit
 	Matrix3d R;
 	R = EulerAnglesToRotationMatrix(xrot, yrot, zrot);
 	char row1[30];
@@ -257,7 +282,7 @@ void blitText()
 	glColor3d(1.0f, .0f, .0f);
 	char quaternionRes[40];
 	sprintf_s(quaternionRes, "(%.2f,  %.2fi,  %.2fj, %.2fk)", q.w(), q.x(), q.y(), q.z());
-	renderbitmap(2.555f, 0.55, GLUT_BITMAP_HELVETICA_18, quaternionRes);
+	renderbitmap(2.555f, 0.45, GLUT_BITMAP_HELVETICA_18, quaternionRes);
 
 	Vector3d rotationVec;
 	rotationVec = EulerAxisAngleToRotationVector({ vec.x(), vec.y(), vec.z() }, vec.w() * DEGS_TO_RADS);
@@ -265,9 +290,7 @@ void blitText()
 	char rotationVector[30];
 	sprintf_s(rotationVector, "(%.2f,  %.2f,  %.2f)", rotationVec.x(), rotationVec.y(), rotationVec.z());
 	renderbitmap(2.555f, -0.95, GLUT_BITMAP_HELVETICA_18, rotationVector);
-
 }
-
 
 int init()
 {
@@ -279,7 +302,6 @@ int init()
 
 	return 1;
 }
-
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -291,8 +313,9 @@ void display()
 			  0.17, 1.0, 0.0);
 	
 	// Called before glRotatef(), so they are NOT rotated
-	blitText();
-
+	blitKeyboardInput();
+	blitAttitudeInfo();
+	
 	GLfloat lineVertices[] =
 	{
 		2,2,0,
@@ -318,7 +341,6 @@ void display()
 	glFlush();
 	glutSwapBuffers();
 }
-
 void resize(int w, int h)
 {
 	glMatrixMode(GL_PROJECTION);
@@ -330,6 +352,23 @@ void resize(int w, int h)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+}
+void resetScenario()
+{
+	xrot = 0.0f;
+	yrot = 0.0f;
+	zrot = 0.0f;
+
+	xdiff = 100.0f;
+	ydiff = 100.0f;
+	zdiff = 100.0f;
+
+	tra_x = 0.0f;
+	tra_y = 0.0f;
+	tra_z = 0.0f;
+
+	grow_shrink = 60.0f;
+	resize_f = 1.0f;
 }
 
 // USER INPUT
@@ -476,20 +515,9 @@ void idleCubeRotation(void)
 	glutPostRedisplay();
 }
 
-void infoConsoleDisplay()
-{
-	cout << "QWEASD ------> Rotate Cube" << endl;
-	cout << "ARROWS ------> Translate Cube" << endl;
-	cout << "SPACEBAR ------> Idle Cube Rotation" << endl;
-	cout << "R ------> Reset Scenario" << endl;
-	cout << "F11 ------> Fullscreen" << endl;
-	cout << "ESCAPE ------> EXIT" << endl << endl;
-}
 
 int main(int argc, char* argv[])
 {
-	infoConsoleDisplay();
-
 	glutInit(&argc, argv);
 
 	glutInitWindowPosition(0, 0);
@@ -507,7 +535,6 @@ int main(int argc, char* argv[])
 	glutSpecialFunc(specialKeyboardInput);
 	// Mouse input
 	glutMouseFunc(mouseInput);
-
 	glutMotionFunc(mouseMotionRotation);
 	glutReshapeFunc(resize);
 	glutIdleFunc(idleCubeRotation);
