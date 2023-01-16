@@ -42,12 +42,13 @@ void resetScenario()
 	tra_z = 0.0f;
 }
 
+
+
 void drawCube()
 {
 	glTranslatef(tra_x, tra_y, tra_z);
 
 	glBegin(GL_QUADS);
-
 
 	glColor3f(1.0f, 0.0f, 0.0f);
 	// FRONT
@@ -97,8 +98,34 @@ void drawCube()
 	glEnd();
 }
 
+void drawRect()
+{
+	glColor3f(0, 0, 0);
+	glRectf(0.0f, 0.0f, 1.0f, 1.0f);
 
-int init(void)
+
+
+}
+
+void renderbitmap(float x, float y, void* font, char* string)
+{
+	char* c;
+	glRasterPos2f(x, y);
+	for (c = string; *c != '\0'; c++) {
+		glutBitmapCharacter(font, *c);
+	}
+}
+
+void blitText()
+{
+	glColor3d(1.0f, 0.0f, 0.0f);
+	char text[100] = { 0 };
+	sprintf_s(text, "Hello World");
+	renderbitmap(3.0f, 1.0f, GLUT_BITMAP_TIMES_ROMAN_24, text);
+}
+
+
+int init()
 {
 	glClearColor(0.9f, 0.9f, 0.9f, 0.0f);
 
@@ -109,7 +136,7 @@ int init(void)
 	return 1;
 }
 
-void display(void)
+void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
@@ -117,11 +144,18 @@ void display(void)
 	gluLookAt(0.15, 0.5, 3.0,
 			  0.0, 0.0, 0.0,
 			  0.17, 1.0, 0.0);
+	
+	// Called before glRotatef(), so they are NOT rotated
+	blitText();
+	drawRect();
+
 
 	glRotatef(xrot, 1.0f, 0.0f, 0.0f);
 	glRotatef(yrot, 0.0f, 1.0f, 0.0f);
-
+	
+	// Called after glRotatef(), everything after the function will be rotated
 	drawCube();
+	
 
 	glFlush();
 	glutSwapBuffers();
@@ -221,7 +255,7 @@ void specialKeyboardInput(int key, int x, int y)
 		}
 	}
 
-	// Rotate Cube
+	// Translate Cube
 	if (key == GLUT_KEY_RIGHT)
 	{
 		tra_z -= 0.01f;
@@ -254,7 +288,7 @@ void mouseInput(int button, int state, int x, int y)
 		mouseDown = 0;
 }
 
-// SPECIAL CUBE ROTATION
+// Mouse cube rotation
 void mouseMotionRotation(int x, int y)
 {
 	if (mouseDown)
@@ -304,10 +338,17 @@ int main(int argc, char* argv[])
 
 	glutCreateWindow("Maths 2 Project | Adria Pons Mensa | Universitat Politècnica de Catalunya · BarcelonaTech");
 	
+
 	glutDisplayFunc(display);
+	
+
+	// Keyboard input
 	glutKeyboardFunc(keyboardInput);
+	// Special keys input
 	glutSpecialFunc(specialKeyboardInput);
+	// Mouse input
 	glutMouseFunc(mouseInput);
+
 	glutMotionFunc(mouseMotionRotation);
 	glutReshapeFunc(resize);
 	glutIdleFunc(idleCubeRotation);
