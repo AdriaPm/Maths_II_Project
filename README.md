@@ -24,8 +24,8 @@ to create the effect of interaction between the user and the 3D model.
 
 ## Developers
 
-![](https://raw.githubusercontent.com/Historn/GameDev-Platformer/main/TeamPhotos/adriapons.jpg)
- - [Adrià Pons Mensa](https://github.com/AdriaPm) - ART & CODE
+![](https://raw.githubusercontent.com/AdriaPm/Maths_II_Project/main/DevPhoto/adriapons.jpg?token=GHSAT0AAAAAAB2TRRQAC54AICHRAQZ2FLSCY6GR5IA)
+ - [Adrià Pons Mensa](https://github.com/AdriaPm)
 
 ## License
 
