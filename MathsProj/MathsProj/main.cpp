@@ -12,6 +12,7 @@
 #define WINDOW_HEIGHT 720
 #define KEY_ESC 27 /* GLUT doesn't supply this */
 #define KEY_SPACEBAR 32 /* GLUT doesn't supply this */
+#define KEY_ENTER 13 /* GLUT doesn't supply this */
 #define M_PI 3.14159265358979323846
 #define DEGS_TO_RADS 0.01745329252
 #define RADS_TO_DEGS 57.295779513
@@ -22,6 +23,7 @@ using namespace Eigen;
 bool fullscreen = false;
 bool mouseDown = false;
 bool idleRotation = false;
+bool enterUserInput = false;
 
 float xrot = 0.0f;
 float yrot = 0.0f;
@@ -91,6 +93,20 @@ Quaternionf EulerAxisAngleToQuaternion(Vector3d axis, float angle)
 	q.z() = axis.z() * sin(angle / 2);
 
 	return q;
+}
+
+// User Rotation Parameters INPUT
+Vector3d enterEulerAngles()
+{
+	Vector3d userEulerAngles;
+
+	cout << "==============================" << endl;
+	cout << "Enter Euler Angles new values:" << endl;
+	cout << "Yaw -----> "; cin >> userEulerAngles.x(); cout << endl;
+	cout << "Pitch ---> "; cin >> userEulerAngles.y(); cout << endl;
+	cout << "Roll ----> "; cin >> userEulerAngles.z(); cout << endl;
+
+	return userEulerAngles;
 }
 
 // Draw 3D Cube
@@ -207,6 +223,13 @@ void blitKeyboardInput()
 	char f11[45];
 	sprintf_s(f11, "Press F11 to enable/disable fullscreen mode.");
 	renderbitmap(-1.04f, -1.75f, GLUT_BITMAP_9_BY_15, f11);
+
+	char enter[42];
+	sprintf_s(enter, "Press ENTER to introduce new Euler Angles");
+	renderbitmap(2.2f, -2.1f, GLUT_BITMAP_9_BY_15, enter);
+	char enter2[23];
+	sprintf_s(enter2, "in the console window.");
+	renderbitmap(2.6f, -2.3f, GLUT_BITMAP_9_BY_15, enter2);
 }
 void blitAttitudeInfo()
 {
@@ -256,7 +279,19 @@ void blitAttitudeInfo()
 
 	// Real-Time info blit
 	Matrix3d R;
+	if (enterUserInput) 
+	{
+		Vector3d angles = enterEulerAngles();
+
+		xrot = angles.x();
+		yrot = angles.y();
+		zrot = angles.z();
+
+		enterUserInput = false;
+	}
+	
 	R = EulerAnglesToRotationMatrix(xrot, yrot, zrot);
+	
 	char row1[30];
 	sprintf_s(row1, "%.2f     %.2f     %.2f", R(0, 0), R(0, 1), R(0, 2));
 	renderbitmap(2.555f, -1.5f, GLUT_BITMAP_HELVETICA_18, row1);
@@ -371,7 +406,7 @@ void resetScenario()
 	resize_f = 1.0f;
 }
 
-// USER INPUT
+// User Keyboard INPUT
 void keyboardInput(unsigned char key, int x, int y)
 {
 	if (!idleRotation)
@@ -422,6 +457,10 @@ void keyboardInput(unsigned char key, int x, int y)
 		idleRotation = !idleRotation;
 		break;
 
+	case KEY_ENTER:
+		enterUserInput = !enterUserInput;
+		break;
+
 	case 'r':
 	case 'R':
 		resetScenario();
@@ -446,7 +485,7 @@ void specialKeyboardInput(int key, int x, int y)
 		else
 		{
 			glutReshapeWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
-			glutPositionWindow(0, 0);
+			glutPositionWindow(800, 150);
 		}
 	}
 
@@ -477,14 +516,12 @@ void mouseInput(int button, int state, int x, int y)
 		mouseDown = 1;
 
 		xdiff = x - yrot;
-		
 		ydiff = -y + xrot;
-		
 	}
 	else
 		mouseDown = 0;
 }
-
+ 
 // Mouse cube rotation
 void mouseMotionRotation(int x, int y)
 {
@@ -520,7 +557,7 @@ int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 
-	glutInitWindowPosition(0, 0);
+	glutInitWindowPosition(800, 150);
 	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
@@ -533,6 +570,7 @@ int main(int argc, char* argv[])
 	glutKeyboardFunc(keyboardInput);
 	// Special keys input
 	glutSpecialFunc(specialKeyboardInput);
+
 	// Mouse input
 	glutMouseFunc(mouseInput);
 	glutMotionFunc(mouseMotionRotation);
