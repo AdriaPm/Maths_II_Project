@@ -10,6 +10,8 @@ What this tool does is to define rotations based on the user input, apply the ro
 and finally redraw the object refreshing the image on the screen. When this process is ran at high rates, it is possible 
 to create the effect of interaction between the user and the 3D model.
 
+![](https://github.com/AdriaPm/Maths_II_Project/blob/main/Photos/cube-rotation.png?raw=true)
+
 ## Key Features
 
 - {W/S} -> X's axis rotation.
